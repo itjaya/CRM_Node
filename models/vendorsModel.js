@@ -13,7 +13,6 @@ let vendorSchema = new Schema({
     zipcode : String,
     website : String,
     category : String,
-    status : String,
     contacts : [{
         personName : String,
         designation : String,
@@ -24,8 +23,10 @@ let vendorSchema = new Schema({
         state : String,
         city : String,
         zipcode : String,
-        status : String,
-        owner : String
+        owner : String,
+        linkedInUrl : String,
+        facebookUrl : String,
+        twitterUrl : String
     }]
 
 });
