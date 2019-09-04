@@ -13,7 +13,8 @@ let clientSchema = new Schema({
     zipcode : String,
     website : String,
     category : String,
-    status : String,
+    url : String,
+    url1 : String,
     contacts : [{
         personName : String,
         designation : String,
@@ -24,8 +25,11 @@ let clientSchema = new Schema({
         state : String,
         city : String,
         zipcode : String,
-        status : String,
-        owner : String
+        owner : String,
+        linkedInUrl : String,
+        facebookUrl : String,
+        twitterUrl : String,
+        officeNumber : String
     }]
 
 });
