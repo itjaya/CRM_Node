@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 let orgSchema = new Schema({
-    organizationName: String,
+        organizationName: String,
         website: String,
         description: String,
         orgEmail: String,

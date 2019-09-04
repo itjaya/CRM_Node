@@ -6,13 +6,18 @@ let userController = {}
 
 userController.userRegister = async (req, res) => {
 
+    let userOrg = [];
+
+    console.log(req.body)
+
     let userData = new userModel({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
+        firstName: req.body.data.firstName,
+        lastName: req.body.data.lastName,
+        organization : req.body.organization,
+        email: req.body.data.email,
         role: req.body.role,
         createdAt: new Date,
-        password: bcrypt.hashSync(req.body.password)
+        password: bcrypt.hashSync(req.body.data.password)
     })
 
     let result = await userData.save()
