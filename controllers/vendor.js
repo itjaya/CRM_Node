@@ -2,15 +2,15 @@ let vendorController = {};
 const vendorModel = require('../models/vendorsModel');
 
 vendorController.addVendor = (req, res) => {
-    // console.log("haiii",req.body)
+    // console.log("haiii",req.body.data.Contact_Details.vendorStep2)
     let vendorStep1 = req.body.data.Business_Information.vendorStep1
     let vendorStep2 = req.body.data.Contact_Details.vendorStep2
 
     let obj = {
         organizationId: req.body.ordId,
         vendorName: vendorStep1.vendorName,
-        contactNumber: vendorStep1.contactNo,
-        emailId: vendorStep1.vendorEmail,
+        contactNumber: vendorStep1.contactNumber,
+        emailId: vendorStep1.emailId,
         addressStreet: vendorStep1.addressStreet,
         country: vendorStep1.country,
         state: vendorStep1.state,
@@ -19,58 +19,80 @@ vendorController.addVendor = (req, res) => {
         website: vendorStep1.website,
         category: vendorStep1.category,
         contacts: [{
-            personName: vendorStep2.contactName,
+            personName: vendorStep2.personName,
             designation: vendorStep2.designation,
-            emailId: vendorStep2.contactEmail,
+            emailId: vendorStep2.emailId,
             mobileNo: vendorStep2.mobileNo,
-            address: vendorStep2.streetAddress,
+            address: vendorStep2.address,
             country: vendorStep2.country,
             state: vendorStep2.state,
             city: vendorStep2.city,
             zipcode: vendorStep2.zipcode,
-            owner: vendorStep2.ownerPerson,
+            owner: vendorStep2.owner,
             linkedInUrl: vendorStep2.linkedInUrl,
             facebookUrl: vendorStep2.facebookUrl,
-            twitterUrl: vendorStep2.twitterUrl
+            twitterUrl: vendorStep2.twitterUrl,
+            officeNo: vendorStep2.officeNo,
+            streetAddress: vendorStep2.streetAddress
         }]
     }
+    if (req.body.data._id !== undefined) {
+        vendorModel.updateOne({ _id: req.body.data._id }, { $set: obj }, (err, update) => {
+            if (!err) {
+                var output = {
+                    msg: "vendor updated successfully.",
+                    condition: true
+                }
+                res.send(output)
+            }
+            else {
+                var output = {
+                    msg: "vendor updted failure.",
+                    condition: false
+                }
+                res.send(output)
+            }
+        })
+    }
+    else {
+        let vendorData = new vendorModel(obj)
+        vendorData.save().then((respo) => {
+            var output = {
+                msg: "vendor added successfully.",
+                condition: true
+            }
+            res.send(output)
 
-    let vendorData = new vendorModel(obj)
-    vendorData.save().then((respo) => {
-        var output = {
-            msg: "vendor added successfully.",
-            condition: true
-        }
-        res.send(output)
+        }).catch((err) => {
+            var output = {
+                msg: "vendor added failure.",
+                condition: false
+            }
+            res.send(output)
 
-    }).catch((err) => {
-        var output = {
-            msg: "vendor added failure.",
-            condition: false
-        }
-        res.send(output)
+        })
+    }
 
-    })
 }
 
-vendorController.getVendors = (req, res) =>{
-    vendorModel.find({ organizationId : req.query.id}, (err, data)=>{
-        if(err){
+vendorController.getVendors = (req, res) => {
+    vendorModel.find({ organizationId: req.query.id }, (err, data) => {
+        if (err) {
             console.log(err)
         }
-        else{
+        else {
             res.send(data)
         }
     })
 }
 
-vendorController.deleteVendors = (req, res) =>{
+vendorController.deleteVendors = (req, res) => {
     // console.log(req.query)
-    vendorModel.deleteOne({ _id : req.query.id}, (err, data)=>{
-        if(err){
+    vendorModel.deleteOne({ _id: req.query.id }, (err, data) => {
+        if (err) {
             console.log(err)
         }
-        else{
+        else {
             res.send(data)
         }
     })

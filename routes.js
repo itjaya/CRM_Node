@@ -25,6 +25,7 @@ router.get("/deleteVendors", vendorController.deleteVendors);
 
 router.post("/addClient", clientController.addClient);
 router.get("/getClients", clientController.getClients);
+router.get("/deleteClients", clientController.deleteClients);
 
 
 module.exports = router;
