@@ -26,4 +26,12 @@ orgController.getOrganizations = async(req, res) => {
     res.send(allData)
 }
 
+orgController.getOrganizationByName = async(req, res) => {
+    console.log("body", req.query)
+    let orgData = await orgModel.findOne({ organizationName:req.query.name })
+
+    console.log("orgData", orgData)
+    res.send(orgData)
+}
+
 module.exports = orgController;

@@ -5,6 +5,7 @@ let userSchema = new Schema({
     firstName : String,
     lastName : String,
     organization : Array,
+    orgId : String,
     // middleName : String,
     email : String,
     role : Object,

@@ -12,6 +12,7 @@ router.get("/getUsers", userController.getUsers)
 // Organization based routes
 router.post("/addOrganization", orgController.addOrganization)
 router.get("/getOrganizations", orgController.getOrganizations)
+router.get("/getOrganizationByName", orgController.getOrganizationByName)
 
 // Vendor based routes
 
