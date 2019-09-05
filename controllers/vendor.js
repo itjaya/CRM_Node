@@ -2,34 +2,37 @@ let vendorController = {};
 const vendorModel = require('../models/vendorsModel');
 
 vendorController.addVendor = (req, res) => {
-    // console.log("haiii",req.body.Contact_Details.vendorStep2)
+    // console.log("haiii",req.body)
+    let vendorStep1 = req.body.data.Business_Information.vendorStep1
+    let vendorStep2 = req.body.data.Contact_Details.vendorStep2
+
     let obj = {
-        organizationId: "ashok",
-        vendorName: req.body.Business_Information.vendorStep1.vendorName,
-        contactNumber: req.body.Business_Information.vendorStep1.contactNo,
-        emailId: req.body.Business_Information.vendorStep1.vendorEmail,
-        addressStreet: req.body.Business_Information.vendorStep1.addressStreet,
-        country: req.body.Business_Information.vendorStep1.country,
-        state: req.body.Business_Information.vendorStep1.state,
-        city: req.body.Business_Information.vendorStep1.city,
-        zipcode: req.body.Business_Information.vendorStep1.zipcode,
-        website: req.body.Business_Information.vendorStep1.website,
-        category: req.body.Business_Information.vendorStep1.category,
-        contacts: {
-            personName: req.body.Contact_Details.vendorStep2.contactName,
-            designation: req.body.Contact_Details.vendorStep2.designation,
-            emailId: req.body.Contact_Details.vendorStep2.contactEmail,
-            mobileNo: req.body.Contact_Details.vendorStep2.mobileNo,
-            address: req.body.Contact_Details.vendorStep2.streetAddress,
-            country: req.body.Contact_Details.vendorStep2.country,
-            state: req.body.Contact_Details.vendorStep2.state,
-            city: req.body.Contact_Details.vendorStep2.city,
-            zipcode: req.body.Contact_Details.vendorStep2.zipcode,
-            owner: req.body.Contact_Details.vendorStep2.ownerPerson,
-            linkedInUrl: req.body.Contact_Details.vendorStep2.linkedInUrl,
-            facebookUrl: req.body.Contact_Details.vendorStep2.facebookUrl,
-            twitterUrl: req.body.Contact_Details.vendorStep2.twitterUrl
-        }
+        organizationId: req.body.ordId,
+        vendorName: vendorStep1.vendorName,
+        contactNumber: vendorStep1.contactNo,
+        emailId: vendorStep1.vendorEmail,
+        addressStreet: vendorStep1.addressStreet,
+        country: vendorStep1.country,
+        state: vendorStep1.state,
+        city: vendorStep1.city,
+        zipcode: vendorStep1.zipcode,
+        website: vendorStep1.website,
+        category: vendorStep1.category,
+        contacts: [{
+            personName: vendorStep2.contactName,
+            designation: vendorStep2.designation,
+            emailId: vendorStep2.contactEmail,
+            mobileNo: vendorStep2.mobileNo,
+            address: vendorStep2.streetAddress,
+            country: vendorStep2.country,
+            state: vendorStep2.state,
+            city: vendorStep2.city,
+            zipcode: vendorStep2.zipcode,
+            owner: vendorStep2.ownerPerson,
+            linkedInUrl: vendorStep2.linkedInUrl,
+            facebookUrl: vendorStep2.facebookUrl,
+            twitterUrl: vendorStep2.twitterUrl
+        }]
     }
 
     let vendorData = new vendorModel(obj)
@@ -51,7 +54,19 @@ vendorController.addVendor = (req, res) => {
 }
 
 vendorController.getVendors = (req, res) =>{
-    vendorModel.find({}, (err, data)=>{
+    vendorModel.find({ organizationId : req.query.id}, (err, data)=>{
+        if(err){
+            console.log(err)
+        }
+        else{
+            res.send(data)
+        }
+    })
+}
+
+vendorController.deleteVendors = (req, res) =>{
+    // console.log(req.query)
+    vendorModel.deleteOne({ _id : req.query.id}, (err, data)=>{
         if(err){
             console.log(err)
         }

@@ -18,6 +18,8 @@ let vendorSchema = new Schema({
         designation : String,
         emailId : String,
         mobileNo : String,
+        officeNo : String,
+        streetAddress : String,
         address : String,
         country : String,
         state : String,

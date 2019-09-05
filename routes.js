@@ -18,6 +18,7 @@ router.get("/getOrganizationByName", orgController.getOrganizationByName)
 
 router.post("/addVendor", vendorController.addVendor);
 router.get("/getVendors", vendorController.getVendors);
+router.get("/deleteVendors", vendorController.deleteVendors);
 
 
 // Client based routes
