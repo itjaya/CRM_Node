@@ -6,10 +6,6 @@ let userController = {}
 
 userController.userRegister = async (req, res) => {
 
-    let userOrg = [];
-
-    console.log(req.body)
-
     let userData = new userModel({
         firstName: req.body.data.firstName,
         lastName: req.body.data.lastName,
@@ -70,14 +66,28 @@ userController.userLogin = (req, res) =>{
 
 userController.getUsers = (req, res) => {
 
-    userModel.find({}, (err, allUsers) => {
-        if(err) {
-            res.send(err)
-        }
-        else {
-            res.send(allUsers)
-        }
-    })
+    if(req.query.id !== "undefined") {
+        userModel.find({ 'organization.value' : req.query.id }, (err, allUsers) => {
+            if(err) {
+                res.send(err)
+            }
+            else {
+                res.send(allUsers)
+            }
+        })
+    }
+    else {
+        userModel.find({}, (err, allUsers) => {
+            if(err) {
+                res.send(err)
+            }
+            else {
+                res.send(allUsers)
+            }
+        })
+    }
+
+  
 }
 
 module.exports = userController;
