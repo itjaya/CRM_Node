@@ -2,7 +2,7 @@ let vendorController = {};
 const vendorModel = require('../models/vendorsModel');
 
 vendorController.addVendor = (req, res) => {
-    // console.log("haiii",req.body.data.Contact_Details.vendorStep2)
+    // console.log("haiii",req.body)
     let vendorStep1 = req.body.data.Business_Information.vendorStep1
     let vendorStep2 = req.body.data.Contact_Details.vendorStep2
 
@@ -23,7 +23,6 @@ vendorController.addVendor = (req, res) => {
             designation: vendorStep2.designation,
             emailId: vendorStep2.emailId,
             mobileNo: vendorStep2.mobileNo,
-            address: vendorStep2.address,
             country: vendorStep2.country,
             state: vendorStep2.state,
             city: vendorStep2.city,
@@ -36,6 +35,7 @@ vendorController.addVendor = (req, res) => {
             streetAddress: vendorStep2.streetAddress
         }]
     }
+    // console.log(obj)
     if (req.body.data._id !== undefined) {
         vendorModel.updateOne({ _id: req.body.data._id }, { $set: obj }, (err, update) => {
             if (!err) {

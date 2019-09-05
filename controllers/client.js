@@ -2,60 +2,81 @@ let clientController = {};
 let clientModel = require("../models/clientsModel");
 
 clientController.addClient = (req, res) => {
-    console.log(req.body.data.Business_Information)
-    // let clientStep1 = req.body.data.Business_Information.clientStep1
-    // let clientStep2 = req.body.data.Contact_Details.clientStep2
+    let clientStep1 = req.body.clientStep1
+    let clientStep2 = req.body.clientStep2
 
-    // let obj = {
-    //     organizationId: req.body.ordId,
-    //     clientName: clientStep1.clientName,
-    //     contactNumber: clientStep1.contactNumber,
-    //     emailId: clientStep1.email,
-    //     addressStreet: clientStep1.streetAddres,
-    //     country: clientStep1.country,
-    //     state: clientStep1.state,
-    //     city: clientStep1.city,
-    //     zipcode: clientStep1.zipcode,
-    //     website: clientStep1.website,
+    let obj = {
+        organizationId: req.body.ordId,
+        clientName: clientStep1.clientName,
+        contactNumber: clientStep1.contactNumber,
+        emailId: clientStep1.emailId,
+        addressStreet: clientStep1.addressStreet,
+        country: clientStep1.country,
+        state: clientStep1.state,
+        city: clientStep1.city,
+        zipcode: clientStep1.zipcode,
+        website: clientStep1.website,
+        fax: clientStep1.fax,
 
-    //     contacts: [{
-    //         personName: clientStep2.contactName,
-    //         designation: clientStep2.designation,
-    //         emailId: clientStep2.email,
-    //         mobileNo: clientStep2.mobileNumber,
-    //         address: clientStep2.intstreetAddress,
-    //         country: clientStep2.country,
-    //         state: clientStep2.state,
-    //         city: clientStep2.city,
-    //         zipcode: clientStep2.zipCode,
-    //         owner: clientStep2.owner,
-    //         linkedInUrl: clientStep2.linkedInProfile,
-    //         facebookUrl: clientStep2.facebookProfile,
-    //         twitterUrl: clientStep2.twitterProfile,
-    //         officeNumber: clientStep2.officeNumber
-    //     }]
-    // }
-    // let clientData = new clientModel(obj)
-    // clientData.save().then((respo) => {
-    //     var output = {
-    //         msg: "client added successfully.",
-    //         condition: true
-    //     }
-    //     res.send(output)
 
-    // }).catch((err) => {
-    //     var output = {
-    //         msg: "client added failure.",
-    //         condition: false
-    //     }
-    //     res.send(output)
+        contacts: [{
+            personName: clientStep2.personName,
+            designation: clientStep2.designation,
+            emailId: clientStep2.emailId,
+            mobileNo: clientStep2.mobileNo,
+            streetAddress: clientStep2.streetAddress,
+            country: clientStep2.country,
+            state: clientStep2.state,
+            city: clientStep2.city,
+            zipcode: clientStep2.zipcode,
+            owner: clientStep2.owner,
+            linkedInUrl: clientStep2.linkedInUrl,
+            facebookUrl: clientStep2.facebookUrl,
+            twitterUrl: clientStep2.twitterUrl,
+            officeNumber: clientStep2.officeNumber
+        }]
+    }
+    if (req.body.clientStep1._id !== undefined) {
+        clientModel.updateOne({ _id: req.body.clientStep1._id }, { $set: obj }, (err, update) => {
+            if (!err) {
+                var output = {
+                    msg: "vendor updated successfully.",
+                    condition: true
+                }
+                res.send(output)
+            }
+            else {
+                var output = {
+                    msg: "vendor updted failure.",
+                    condition: false
+                }
+                res.send(output)
+            }
+        })
+    }
+    else {
 
-    // })
+        let clientData = new clientModel(obj)
+        clientData.save().then((respo) => {
+            var output = {
+                msg: "client added successfully.",
+                condition: true
+            }
+            res.send(output)
 
+        }).catch((err) => {
+            var output = {
+                msg: "client added failure.",
+                condition: false
+            }
+            res.send(output)
+
+        })
+    }
 }
 
 clientController.getClients = (req, res) => {
-    clientModel.find({ organizationId : req.query.id}, (err, data) => {
+    clientModel.find({ organizationId: req.query.id }, (err, data) => {
         if (err) {
             console.log(err)
         }
@@ -65,7 +86,7 @@ clientController.getClients = (req, res) => {
     })
 }
 
-clientController.deleteClients = (req, res) =>{
+clientController.deleteClients = (req, res) => {
     clientModel.deleteOne({ _id: req.query.id }, (err, data) => {
         if (err) {
             console.log(err)

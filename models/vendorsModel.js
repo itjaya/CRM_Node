@@ -20,7 +20,6 @@ let vendorSchema = new Schema({
         mobileNo : String,
         officeNo : String,
         streetAddress : String,
-        address : String,
         country : String,
         state : String,
         city : String,
