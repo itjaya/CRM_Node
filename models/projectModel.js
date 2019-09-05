@@ -2,13 +2,19 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 let projectSchema = new Schema({
-    userId : String,
+    userId : Object,
     organizationId : String,
-    clientId : String,
-    vendorId : String,
+    clientId : Object,
+    vendorId : Object,
     projectName : String,
     startDate : String,  
     endDate : String,
+    street1 : String,
+    street2 : String,
+    country : String,
+    state : String,
+    city : String,
+    zipcode : String
 });
 
 let projectModel = mongoose.model("projectModel", projectSchema);

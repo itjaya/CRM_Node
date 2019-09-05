@@ -4,6 +4,9 @@ const userController = require("./controllers/userController");
 const orgController = require("./controllers/organizationController");
 const vendorController = require("./controllers/vendor");
 const clientController = require("./controllers/client");
+const projController = require("./controllers/projectController");
+
+
 // User based routes
 router.post("/userRegister", userController.userRegister);
 router.post("/userLogin", userController.userLogin);
@@ -27,5 +30,10 @@ router.post("/addClient", clientController.addClient);
 router.get("/getClients", clientController.getClients);
 router.get("/deleteClients", clientController.deleteClients);
 
+
+// Project based routes
+
+router.post("/addProject", projController.addProject)
+router.get("/getProjects", projController.getProjcts)
 
 module.exports = router;
