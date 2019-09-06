@@ -35,5 +35,6 @@ router.get("/deleteClients", clientController.deleteClients);
 
 router.post("/addProject", projController.addProject)
 router.get("/getProjects", projController.getProjcts)
+router.post("/deleteProject", projController.deleteProject)
 
 module.exports = router;
