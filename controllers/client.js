@@ -40,14 +40,14 @@ clientController.addClient = (req, res) => {
         clientModel.updateOne({ _id: req.body.clientStep1._id }, { $set: obj }, (err, update) => {
             if (!err) {
                 var output = {
-                    msg: "vendor updated successfully.",
+                    msg: "Client updated successfully.",
                     condition: true
                 }
                 res.send(output)
             }
             else {
                 var output = {
-                    msg: "vendor updted failure.",
+                    msg: "Client updted failure.",
                     condition: false
                 }
                 res.send(output)
@@ -59,14 +59,14 @@ clientController.addClient = (req, res) => {
         let clientData = new clientModel(obj)
         clientData.save().then((respo) => {
             var output = {
-                msg: "client added successfully.",
+                msg: "Client added successfully.",
                 condition: true
             }
             res.send(output)
 
         }).catch((err) => {
             var output = {
-                msg: "client added failure.",
+                msg: "Client added failure.",
                 condition: false
             }
             res.send(output)

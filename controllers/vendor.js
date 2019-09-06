@@ -35,19 +35,19 @@ vendorController.addVendor = (req, res) => {
             streetAddress: vendorStep2.streetAddress
         }]
     }
-    // console.log(obj)
+    // console.log("haiii", obj)
     if (req.body.data._id !== undefined) {
         vendorModel.updateOne({ _id: req.body.data._id }, { $set: obj }, (err, update) => {
             if (!err) {
                 var output = {
-                    msg: "vendor updated successfully.",
+                    msg: "Vendor updated successfully.",
                     condition: true
                 }
                 res.send(output)
             }
             else {
                 var output = {
-                    msg: "vendor updted failure.",
+                    msg: "Vendor updted failure.",
                     condition: false
                 }
                 res.send(output)
@@ -58,14 +58,14 @@ vendorController.addVendor = (req, res) => {
         let vendorData = new vendorModel(obj)
         vendorData.save().then((respo) => {
             var output = {
-                msg: "vendor added successfully.",
+                msg: "Vendor added successfully.",
                 condition: true
             }
             res.send(output)
 
         }).catch((err) => {
             var output = {
-                msg: "vendor added failure.",
+                msg: "Vendor added failure.",
                 condition: false
             }
             res.send(output)
