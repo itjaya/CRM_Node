@@ -4,12 +4,17 @@ const Schema = mongoose.Schema;
 let timesheetSchema = new Schema({
     userId : String,
     organizationId : String,
-    projectId : String,
-    weekNo : String,
-    startDate : String,
-    endDate : String,
-    totalHrs : String,
-    comments : String
+    project : Object,
+    description : String,
+    year : String,
+    events : [{
+        week : [{ 
+            date: String,
+            weekNo: String,
+            isAllDay : Boolean,
+            lock : { type : Boolean, default : false}
+        }]
+    }] 
 });
 
 let timesheetModel = mongoose.model("timesheetModel", timesheetSchema);

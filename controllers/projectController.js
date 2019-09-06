@@ -93,4 +93,11 @@ projController.deleteProject = async(req, res) => {
     }
 }
 
+projController.getUserProjects = async (req, res) => {
+
+    let userProjects = await projModel.find({ "userId.value" : req.query.id })
+    // console.log(userProjects)
+    res.send(userProjects)
+}
+
 module.exports = projController;

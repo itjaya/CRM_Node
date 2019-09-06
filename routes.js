@@ -5,6 +5,7 @@ const orgController = require("./controllers/organizationController");
 const vendorController = require("./controllers/vendor");
 const clientController = require("./controllers/client");
 const projController = require("./controllers/projectController");
+const timesheetController = require("./controllers/timesheetController");
 
 
 // User based routes
@@ -33,8 +34,14 @@ router.get("/deleteClients", clientController.deleteClients);
 
 // Project based routes
 
-router.post("/addProject", projController.addProject)
-router.get("/getProjects", projController.getProjcts)
-router.post("/deleteProject", projController.deleteProject)
+router.post("/addProject", projController.addProject);
+router.get("/getProjects", projController.getProjcts);
+router.post("/deleteProject", projController.deleteProject);
+router.get("/getUserProjects", projController.getUserProjects);
+
+// Timesheets
+
+router.post("/addTimesheet", timesheetController.addTimesheet)
+
 
 module.exports = router;
