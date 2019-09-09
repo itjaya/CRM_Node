@@ -1,4 +1,5 @@
 const projModel = require('../models/projectModel');
+const timesheetModel = require('../models/timesheetsModel');
 
 const projController = {};
 
@@ -25,7 +26,6 @@ projController.addProject = async(req, res) => {
     if (req.body.projectId && req.body.projectId !== "undefined") {
 
         projModel.updateOne({ _id : req.body.projectId }, { $set : projectData }, (err, result) => {
-
             if(err) {
                 var output = {
                     msg: "Error in project update.",
@@ -45,7 +45,18 @@ projController.addProject = async(req, res) => {
     else {
         let project = new projModel(projectData)
         try {
-            await project.save();
+            let prjResult = await project.save();
+            let timeSheetData = {
+                userId : clientData.user,
+                organizationId : clientData.organization,
+                project : prjResult._id,
+                prjStartDate : prjResult.startDate,
+                prjEndDate : prjResult.endDate,
+                year : new Date().getFullYear(),
+                events : []         
+            }
+            let timesheets = new timesheetModel(timeSheetData);
+            await timesheets.save();
             var output = {
                 msg: "Project added successfully.",
                 condition: true

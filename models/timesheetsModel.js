@@ -2,18 +2,22 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 let timesheetSchema = new Schema({
-    userId : String,
-    organizationId : String,
-    project : Object,
-    description : String,
-    year : String,
-    events : [{
-        week : [{ 
-            date: String,
-            weekNo: String,
-            isAllDay : Boolean,
-            lock : { type : Boolean, default : false}
-        }]
+    userId: Object,
+    organizationId: String,
+    project: String,
+    prjStartDate : String,
+    prjEndDate : String,
+    description: String,
+    year: String,
+    events: [{
+        title : String,
+        start: String,
+        end : String,
+        weekNo: String,
+        month : String,
+        year : String,
+        isAllDay: Boolean,
+        lock: { type: Boolean, default: false }
     }] 
 });
 
