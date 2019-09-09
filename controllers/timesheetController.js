@@ -12,11 +12,12 @@ timeSheetController.addTimesheet = (req, res) => {
             res.status(500).send("Error");
         }
         else {
-            // console.log("data", data)
+            // console.log("data")
             let weekData = req.body.weekData;
             let monthNo = moment().month() + 1;
             let yearNo = moment().year();
-            let weekNo = moment().week();
+            let weekNo = req.body.weekNo;
+
             let array = [];
 
             for (var i = 0; i < weekData.length; i++) {
@@ -32,15 +33,51 @@ timeSheetController.addTimesheet = (req, res) => {
                 }
                 array.push(obj)
             }
-            timesheetModel.updateOne({ "userId.value": req.body.userId._id }, { $push: { events: array } }, (error, update) => {
-                if (error) {
-                    console.log(error)
+            if (data.events.length > 0) {
+                //  console.log("array", data.events)
+                let oldEventsArray = [];
+                for (var j = 0; j < data.events.length; j++) {
+                    //  console.log(data.events[j].weekNo)
+                    if (data.events[j].weekNo === weekNo) {
+                        // console.log("haiii", weekNo)
+                        timesheetModel.updateOne({ "userId.value": req.body.userId._id }, { $set: { events: array } }, (error, update) => {
+                            if (error) {
+                                console.log(error)
+                            }
+                            else {
+                                console.log(update)
+                            }
+                        })
+                    }
+                    else {
+                        // console.log("no week", weekNo)
+
+                        timesheetModel.updateOne({ "userId.value": req.body.userId._id }, { $push: { events: array } }, (error, update) => {
+                            if (error) {
+                                console.log(error)
+                            }
+                            else {
+                                console.log(update)
+                            }
+                        })
+                    }
                 }
-                else {
-                    console.log(update)
-                }
-            })
+
+            }
+            else {
+                timesheetModel.updateOne({ "userId.value": req.body.userId._id }, { $push: { events: array } }, (error, update) => {
+                    if (error) {
+                        console.log(error)
+                    }
+                    else {
+                        console.log(update)
+                    }
+                })
+
+            }
+
         }
+       
     })
 }
 
