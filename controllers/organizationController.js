@@ -3,20 +3,21 @@ let orgController = {}
 
 orgController.addOrganization = async (req, res) => {
     // console.log("body", req.body)
-
-    let orgData = new orgModel(req.body);
-    let result = await orgData.save();
-    if(result._id) {
-        res.send({
+    try {
+        let orgData = new orgModel(req.body);
+        await orgData.save();
+        let output = {
             msg: "Organization added successfully.",
             condition: true
-        })
+        };
+        res.send(output)
     }
-    else {
-        res.send({
+    catch (error) {
+        let output = {
             msg: "Error in adding organization.",
             condition: false
-        })
+        }
+        res.send(output)
     }
 }
 
@@ -26,7 +27,7 @@ orgController.getOrganizations = async(req, res) => {
     res.send(allData)
 }
 
-orgController.getOrganizationByName = async(req, res) => {
+orgController.getOrganizationByName = async(req, res) => {``
     let orgData = await orgModel.findOne({ organizationName:req.query.name })
 
     res.send(orgData)
