@@ -76,6 +76,7 @@ clientController.addClient = (req, res) => {
 }
 
 clientController.getClients = (req, res) => {
+    console.log("haiiii", req.query)
     clientModel.find({ organizationId: req.query.id }, (err, data) => {
         if (err) {
             console.log(err)
