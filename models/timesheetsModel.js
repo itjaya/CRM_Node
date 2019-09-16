@@ -9,8 +9,14 @@ let timesheetSchema = new Schema({
     prjEndDate : String,
     description: String,
     year: String,
+    uploads :[{
+        filePath : String,
+        fileName : String,
+        start: String,
+        end : String
+    }],
     events: [{
-        title : String,
+        title : Number,
         start: String,
         end : String,
         weekNo: String,
@@ -18,7 +24,8 @@ let timesheetSchema = new Schema({
         year : String,
         isAllDay: Boolean,
         lock: { type: Boolean, default: false }
-    }] 
+    }]
+
 });
 
 let timesheetModel = mongoose.model("timesheetModel", timesheetSchema);
