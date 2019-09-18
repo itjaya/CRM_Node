@@ -3,7 +3,6 @@ const orgModel = require("../models/organizationModel")
 const moment = require('moment');
 const multer = require("multer");
 const fs = require("fs");
-const pathName = require("path");
 const timeSheetController = {};
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -11,7 +10,6 @@ const monthNames = ["January", "February", "March", "April", "May", "June", "Jul
 timeSheetController.addTimesheet = async (req, res) => {
 
     // console.log("body", req.body)
-
     timesheetModel.findOne({ $and: [{ project: req.body.projectId.value, "userId.value": req.body.userId._id }] }, async (err, data) => {
         if (err) {
             res.status(500).send("Error");
@@ -23,57 +21,94 @@ timeSheetController.addTimesheet = async (req, res) => {
             let yearNo = moment().year();
             let weekNo = req.body.weekNo;
             let array = [];
+            let submitArray = [];
             let oldEventsArray = [];
 
             for (var i = 0; i < weekData.length; i++) {
-                // console.log(weekData[i])
                 if (weekData[i].title.length > 0) {
-                    let obj = {
-                        start: moment(new Date(weekData[i].date)).format("MM-DD-YYYY"),
-                        end: moment(new Date(weekData[i].date)).format("MM-DD-YYYY"),
-                        title: weekData[i].title,
-                        weekNo: weekNo,
-                        month: monthNo,
-                        year: yearNo,
-                        isAllDay: true,
-                        lock: false
-                    }
 
-                    array.push(obj)
+                    if(req.body.type === "submit") {
+                        let obj = {
+                            start: moment(new Date(weekData[i].date)).format("MM-DD-YYYY"),
+                            end: moment(new Date(weekData[i].date)).format("MM-DD-YYYY"),
+                            title: weekData[i].title,
+                            weekNo: weekNo,
+                            month: monthNo,
+                            year: yearNo,
+                            isAllDay: true,
+                            lock: true
+                        }
+                        submitArray.push(obj);
+                    }
+                    else {
+                        let obj = {
+                            start: moment(new Date(weekData[i].date)).format("MM-DD-YYYY"),
+                            end: moment(new Date(weekData[i].date)).format("MM-DD-YYYY"),
+                            title: weekData[i].title,
+                            weekNo: weekNo,
+                            month: monthNo,
+                            year: yearNo,
+                            isAllDay: true,
+                            lock: false
+                        }
+                        array.push(obj);
+                    }
+                    
                 }
             }
-
             if (data.events.length > 0) {
                 for (var j = 0; j < data.events.length; j++) {
                     oldEventsArray.push(data.events[j].start);
                 }
-                for (var k = 0; k < array.length; k++) {
-                    let newWeekDate = array[k].start
-                    if (oldEventsArray.includes(newWeekDate)) {
+                if(req.body.type === "submit") {
+                    for (var k = 0; k < submitArray.length; k++) {
+                        let newWeekDate = submitArray[k].start;
+                        if (submitArray[k].title.length > 0) {
+                            if (oldEventsArray.includes(newWeekDate)) {
 
-                        if (array[k].title.length > 0) {
-                            try {
-                                await timesheetModel.updateMany({ $and: [{ project: req.body.projectId.value, "userId.value": req.body.userId._id, "events.start": array[k].start }] }, { $set: { "events.$": array[k] } });
+                                try {
+                                    await timesheetModel.updateMany({ $and: [{ project: req.body.projectId.value, "userId.value": req.body.userId._id, "events.start": submitArray[k].start }] }, { $set: { "events.$": submitArray[k] } });
+                                }
+                                catch (error) { }
                             }
-                            catch (error) { }
+                            else {
+                                try {
+                                    await timesheetModel.updateMany({ $and: [{ project: req.body.projectId.value, "userId.value": req.body.userId._id }] }, { $push: { events: submitArray[k] } });
+                                }
+                                catch (error) { }
+                            }
                         }
                     }
-                    else {
-                        if (array[k].title.length > 0) {
-                            try {
-                                await timesheetModel.updateMany({ $and: [{ project: req.body.projectId.value, "userId.value": req.body.userId._id }] }, { $push: { events: array[k] } });
-                            }
-                            catch (error) { }
-                        }
-                    }
+                    res.send({
+                        msg: "Timesheet data submitted successfully.",
+                        condition: true
+                    })
                 }
-                res.send({
-                    msg: "Timesheet data updated successfully.",
-                    condition: true
-                })
+                else {
+                    for (var k = 0; k < array.length; k++) {
+                        let newWeekDate = array[k].start
+                        if (array[k].title.length > 0) {
 
+                            if (oldEventsArray.includes(newWeekDate)) {
+                                try {
+                                    await timesheetModel.updateMany({ $and: [{ project: req.body.projectId.value, "userId.value": req.body.userId._id, "events.start": array[k].start }] }, { $set: { "events.$": array[k] } });
+                                }
+                                catch (error) { }
+                            }
+                            else {
+                                try {
+                                    await timesheetModel.updateMany({ $and: [{ project: req.body.projectId.value, "userId.value": req.body.userId._id }] }, { $push: { events: array[k] } });
+                                }
+                                catch (error) { }
+                            }
+                        }
+                    }
+                    res.send({
+                        msg: "Timesheet data updated successfully.",
+                        condition: true
+                    })
+                }
             }
-
             else {
                 try {
                     await timesheetModel.updateOne({ "userId.value": req.body.userId._id }, { $push: { events: array } });
@@ -89,9 +124,7 @@ timeSheetController.addTimesheet = async (req, res) => {
                     })
                 }
             }
-
         }
-
     })
 }
 
@@ -107,6 +140,7 @@ timeSheetController.getAllEvents = async (req, res) => {
 }
 
 timeSheetController.uploadDocuments = async (req, res) => {
+    let array = [];
 
     try {
         let result = await timesheetModel.findOne({ "userId.value": req.query.id });
@@ -330,19 +364,25 @@ timeSheetController.uploadDocuments = async (req, res) => {
             }
 
             },
-            filename: function (req, file, callback) {
+             filename: async function (req, file, callback) {
+                    array.push(file)
                 callback(null, result.userId.label +"_"+ date.year() +"_"+ monthNames[date.month()]+"_"+ date.week()+"_"+file.originalname);
             }
         })
+        // timesheetModel.findOne({ "userId.value": req.query.id }, (err, data) =>{
+        //     console.log("Ashok", array)
+        // });
 
         var upload = multer({ storage: storage }).array("file", 5);
 
-        upload(req, res, function (err) {
+        upload(req, res, async function (err) {
 
             if (err) {
                 res.json(501)
             }
             else {
+                let result = await timesheetModel.updateOne({ uploads: req.files });
+
             }
         })
     }

@@ -10,7 +10,7 @@ let personalDetailSchema = new Schema({
     phoneNo : String,
     SSN : Number,
     dateOfBirth : String,
-    workAuthorization : String,
+    visaType : String,
     country: String,
     State : String,
     maritalStatus : String,

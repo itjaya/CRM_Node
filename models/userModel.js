@@ -9,6 +9,7 @@ let userSchema = new Schema({
     email : String,
     role : Object,
     createdAt : String,
+    account : false,
     password: String
 });
 

@@ -9,12 +9,7 @@ let timesheetSchema = new Schema({
     prjEndDate : String,
     description: String,
     year: String,
-    uploads :[{
-        filePath : String,
-        fileName : String,
-        start: String,
-        end : String
-    }],
+    uploads :[],
     events: [{
         title : Number,
         start: String,
