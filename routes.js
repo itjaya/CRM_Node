@@ -48,6 +48,7 @@ router.get("/getUserProjects", projController.getUserProjects);
 router.post("/addTimesheet", timesheetController.addTimesheet)
 router.get("/allEvents", timesheetController.getAllEvents)
 router.post("/upload", timesheetController.uploadDocuments)
+router.get("/downloadtimesheet", timesheetController.downloadtimesheet)
 
 
 module.exports = router;
