@@ -6,8 +6,117 @@ var nodemailer = require("nodemailer");
 let userController = {}
 
 userController.userRegister = async (req, res) => {
+    if(req.body.id !== undefined) {
+        console.log(req.body)
+        let updateData = {
+            firstName : req.body.firstName,
+            lastName : req.body.lastName,
+            email : req.body.email
+        }
+        userModel.findOne({ $and: [{ "_id": req.body.id }, { "email": req.body.email }] }, function (err, result) {
 
-    let result = await userModel.findOne({ email: req.body.data.email })
+            if (err) console.log(err)
+
+
+            else if (result) {
+
+                userModel.findOne({ $and: [{ "_id": { $ne: req.body.id } }, { "email": { $ne: req.body.email } }] }, function (err, result1) {
+
+                    if (err) console.log(err)
+
+                    else if (result1) {
+
+                        userModel.updateOne({ '_id': req.body.id }, { $set: updateData }, function (err, result2) {
+
+                            if (!err) {
+                                if (result2.nModified == 0) {
+                                    var output = {
+                                        msg: "Your data not modified.",
+                                        condition: true,
+                                    }
+                                    res.send(output)
+                                }
+
+                                else {
+                                    userModel.findOne({ "_id": req.body.id }, function (err, result3) {
+                                        if (!err) {
+                                            var out = {
+                                                msg: "Your data updated successfully.",
+                                                condition: true,
+                                            }
+                                            res.send(out);
+                                        }
+                                    });
+                                }
+                            }
+                            else {
+
+                                var out = {
+                                    msg: 'update failed like did not matched id.',
+                                    condition: false,
+                                }
+                                res.send(out);
+                            }
+                        });
+                    }
+                })
+            }
+            else {
+                userModel.findOne({ "email": req.body.email }, function (err, result4) {
+
+                    if (err) console.log(err)
+
+                    else {
+                        if (result4 == null) {
+                            userModel.updateOne({ '_id': req.body.id }, { $set: updateData }, function (err, result5) {
+
+                                if (!err) {
+                                    if (result5.nModified == 0) {
+                                        var output = {
+                                            msg: "Your data not modified",
+                                            condition: true,
+                                        }
+                                        res.send(output)
+
+                                    }
+                                    else {
+                                        userModel.findOne({ "_id": req.body.id }, function (err, result6) {
+                                            if (!err) {
+                                                condition = true;
+                                                var out = {
+                                                    msg: "Your data updated successfully.",
+                                                    condition: true,
+                                                }
+                                                res.send(out);
+                                            }
+                                        });
+                                    }
+                                } else {
+
+                                    var out = {
+                                        msg: 'update failed like did not matched id.',
+                                        condition: false,
+                                    }
+                                    res.send(out);
+
+                                }
+                            });
+                        }
+                        else {
+                            condition = false;
+                            var out = {
+                                msg: "Email already exists.",
+                                condition: false,
+                            }
+                            res.send(out);
+                        }
+                    }
+                })
+            }
+        })
+    }
+    else{
+let result = await userModel.findOne({ email: req.body.data.email })
     // console.log("result", result)
     if (result == null) {
         let userData = new userModel({
@@ -35,6 +144,8 @@ userController.userRegister = async (req, res) => {
         }
         res.send(output)
     }
+    }
+    
 }
 
 userController.userLogin = (req, res) => {

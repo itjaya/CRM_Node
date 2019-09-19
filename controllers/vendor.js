@@ -75,15 +75,16 @@ vendorController.addVendor = (req, res) => {
 
 }
 
-vendorController.getVendors = (req, res) => {
-    vendorModel.find({ organizationId: req.query.id }, (err, data) => {
-        if (err) {
-            console.log(err)
-        }
-        else {
-            res.send(data)
-        }
-    })
+vendorController.getVendors = async (req, res) => {
+   
+    if (req.query.id !== "undefined") {
+        let vendors = await vendorModel.find({ organizationId: req.query.id })
+        res.send(vendors)
+    }
+    else {
+        let vendors = await vendorModel.find({})
+        res.send(vendors)
+    }
 }
 
 vendorController.deleteVendors = (req, res) => {

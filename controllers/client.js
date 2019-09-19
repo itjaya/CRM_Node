@@ -75,16 +75,16 @@ clientController.addClient = (req, res) => {
     }
 }
 
-clientController.getClients = (req, res) => {
-    console.log("haiiii", req.query)
-    clientModel.find({ organizationId: req.query.id }, (err, data) => {
-        if (err) {
-            console.log(err)
-        }
-        else {
-            res.send(data)
-        }
-    })
+clientController.getClients = async(req, res) => {
+    // console.log("haiiii", req.query)
+    if (req.query.id !== "undefined") {
+        let clients = await clientModel.find({ organizationId: req.query.id })
+        res.send(clients)
+    }
+    else {
+        let clients = await clientModel.find({})
+        res.send(clients)
+    }
 }
 
 clientController.deleteClients = (req, res) => {

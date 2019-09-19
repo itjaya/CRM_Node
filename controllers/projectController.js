@@ -81,6 +81,10 @@ projController.getProjcts = async(req, res) => {
         let projects = await projModel.find({ organizationId : req.query.id })
         res.send(projects)
     }
+    else{
+        let projects = await projModel.find({ })
+        res.send(projects)
+    }
 }
 
 projController.deleteProject = async(req, res) => {
