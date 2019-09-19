@@ -13,6 +13,8 @@ router.post("/userRegister", userController.userRegister);
 router.post("/userLogin", userController.userLogin);
 router.get("/getUsers", userController.getUsers);
 router.get("/userAcitivate", userController.userAcitivate);
+router.post("/passwordUpdate", userController.userPasswordUpdate);
+router.post("/forgetPassword", userController.forgetPassword);
 
 // Organization based routes
 router.post("/addOrganization", orgController.addOrganization)
