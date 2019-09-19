@@ -2,44 +2,52 @@ const orgModel = require('../models/organizationModel');
 let orgController = {}
 
 orgController.addOrganization = async (req, res) => {
-    // console.log("body", req.body)
 
-    if(req.body._id) {
-        try {
-            await orgModel.updateOne({ _id : req.body._id }, { $set : req.body })
-            let output = {
-                msg: "Organization data updated successfully.",
-                condition: true
-            };
-            res.send(output)
-        }
-        catch (error) {
-            let output = {
-                msg: "Error in updating organization data.",
-                condition: false
+    let org = await orgModel.findOne({ organizationName : req.body.organizationName })
+    if(org == null) {
+        if(req.body._id) {
+            try {
+                await orgModel.updateOne({ _id : req.body._id }, { $set : req.body })
+                let output = {
+                    msg: "Organization data updated successfully.",
+                    condition: true
+                };
+                res.send(output)
             }
-            res.send(output)
+            catch (error) {
+                let output = {
+                    msg: "Error in updating organization data.",
+                    condition: false
+                }
+                res.send(output)
+            }
+        }
+        else {
+            try {
+                let orgData = new orgModel(req.body);
+                await orgData.save();
+                let output = {
+                    msg: "Organization data added successfully.",
+                    condition: true
+                };
+                res.send(output)
+            }
+            catch (error) {
+                let output = {
+                    msg: "Error in adding organization data.",
+                    condition: false
+                }
+                res.send(output)
+            }
         }
     }
     else {
-        try {
-            let orgData = new orgModel(req.body);
-            await orgData.save();
-            let output = {
-                msg: "Organization data added successfully.",
-                condition: true
-            };
-            res.send(output)
+        let output = {
+            msg: "Organization name already exists.",
+            condition: false
         }
-        catch (error) {
-            let output = {
-                msg: "Error in adding organization data.",
-                condition: false
-            }
-            res.send(output)
-        }
+        res.send(output)
     }
-   
 }
 
 orgController.getOrganizations = async(req, res) => {
