@@ -1,6 +1,7 @@
 const userModel = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
+var nodemailer = require("nodemailer");
 
 let userController = {}
 
@@ -124,6 +125,100 @@ userController.userAcitivate = async (req, res) => {
     else {
         let result = await userModel.updateOne({ _id: req.query.id }, { $set: { account: true } })
         res.send(result)
+    }
+
+}
+
+userController.userPasswordUpdate = async (req, res) =>{
+    // console.log("haiii", req.body)
+    if(req.body.type === "reset") {
+       await userModel.updateOne({ email : req.body.email}, {$set : { password : bcrypt.hashSync(req.body.password)}},(err, update) =>{
+        if (err) console.log("err")
+        else{
+            let output = {
+                msg : "Password updated successfully.",
+                condition : true
+            }
+            res.send(output)
+        }
+       });
+    }
+    else{
+        console.log("haiiiii")
+        let result = await userModel.findOne({ _id : req.body.id});
+        bcrypt.compare(req.body.oldPassword, result.password, function (err, hash) {
+            if (err) console.log("err")
+            else {
+                if (hash) {
+                    userModel.updateOne({ _id : req.body.id}, { $set : {password : bcrypt.hashSync(req.body.password)}}, (err, update)=>{
+                       if(err) console.log(err)
+                       else{
+                           let output = {
+                               msg : "Password Updated successfully.",
+                               condition : true
+                           }
+                           res.send(output)
+                       }
+                   })
+                }
+                else{
+                    let output = {
+                        msg : "Old password didn't matched.",
+                        condition : false
+                    }
+                    res.send(output)
+                }
+            }
+        })
+    
+    }
+    
+}
+
+userController.forgetPassword = async (req, res) =>{
+    // console.log(req.body)
+    let Email = req.body.email;
+    let result = await userModel.findOne({ email : req.body.email})
+    // console.log("Ashok", result)
+    if(result == null) {
+        var output = {
+            msg : "Invalid email please try it again.",
+            condition : false
+        }
+        res.send(output)
+    }
+    else{
+       
+        var transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            // host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth: {
+                user: "ts.itideology@gmail.com",
+                pass: "Itideology123"
+            }
+        })
+        // var transporter = nodemailer.createTransport('smtps://user%40gmail.com:pass@smtp.gmail.com');
+        var mailOptions = {
+            from: '"It Ideology "<ts.itideology@gmail.com>', // sender address
+            to:Email, // list of receivers
+            subject: 'itideology', // Subject line
+            text: 'Hello world ?', // plaintext body
+            html : `<p>Hi ${result.firstName} </p>Please Click below link to reset password,<br/> <a href=http://localhost:3000/reset?${Email}>Reset Password</a><p>Regards,<br />It Ideology.</p>`
+        };
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log("error", error);
+            }
+            // console.log(info);
+        });
+        var output = {
+            msg : "Please check your mail to reset password.",
+            condition : true
+        }
+        res.send(output)
+
     }
 
 }
