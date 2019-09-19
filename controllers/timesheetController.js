@@ -4,6 +4,7 @@ const moment = require('moment');
 const multer = require("multer");
 const fs = require("fs");
 const timeSheetController = {};
+const path  = require("path")
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -132,7 +133,7 @@ timeSheetController.getAllEvents = async (req, res) => {
 
     try {
         let events = await timesheetModel.findOne({ $and: [{ "userId.value": req.query.userId }, { project: req.query.project.value }] });
-        console.log("events", events)
+        // console.log("events", events)
         res.status(200).send(events)
     }
     catch (error) {
@@ -141,6 +142,7 @@ timeSheetController.getAllEvents = async (req, res) => {
 }
 
 timeSheetController.uploadDocuments = async (req, res) => {
+    console.log("query", req.query)
     let array = [];
 
     try {
@@ -370,9 +372,6 @@ timeSheetController.uploadDocuments = async (req, res) => {
                 callback(null, result.userId.label +"_"+ date.year() +"_"+ monthNames[date.month()]+"_"+ date.week()+"_"+file.originalname);
             }
         })
-        // timesheetModel.findOne({ "userId.value": req.query.id }, (err, data) =>{
-        //     console.log("Ashok", array)
-        // });
 
         var upload = multer({ storage: storage }).array("file", 5);
 
@@ -382,8 +381,17 @@ timeSheetController.uploadDocuments = async (req, res) => {
                 res.json(501)
             }
             else {
-                let result = await timesheetModel.updateOne({ uploads: req.files });
+                console.log("body", req.body)
+                let array = [];
+                // array.push ({
 
+                //     files : req.files,
+                //     weekNo : req.body.weekNo,
+                //     month : req.body.month,
+                //     year : req.body.year
+
+                // })
+                // let result = await timesheetModel.updateOne({ uploads: array });
             }
         })
     }
@@ -393,4 +401,17 @@ timeSheetController.uploadDocuments = async (req, res) => {
   
 }
 
+timeSheetController.downloadtimesheet = async (req, res) => {
+     var path1 = path.resolve(".") + "/" + req.query.data
+    res.download(path1, req.query.filename, function (err) {
+        if (err) {
+            console.log(err)
+        }
+        else {
+            console.log("success")
+        }
+
+    })
+
+}
 module.exports = timeSheetController;
