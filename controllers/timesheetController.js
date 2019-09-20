@@ -148,6 +148,7 @@ timeSheetController.uploadDocuments = async (req, res) => {
         let result = await timesheetModel.findOne({ "userId.value": req.query.id });
         let orgResult = await orgModel.findOne({_id : result.organizationId});
         let date = moment(new Date(req.query.navigatedDate));
+        console.log("date", date.week())
         var storage = multer.diskStorage({
 
             destination: function (req, file, cb) {
@@ -382,35 +383,46 @@ timeSheetController.uploadDocuments = async (req, res) => {
             }
             else {
                 let array = [];
-                array.push(...req.files)
-                
+                console.log("body", req.body.weekNo)                
                 let result1 = await timesheetModel.findOne({  $and: [{ "userId.value": req.query.id, project : req.body.projectId }] });
-                if(result1.uploads.length > 0) {
-                    for (let upload of result1.uploads) {
-                        if(upload.weekNo === req.body.weekNo) {
-                        array.push(...upload.files)
-                        }
-                        else {
-                           //write 
-                        }
-                    }
-                     timesheetModel.updateOne({ $and: [{ "userId.value": req.query.id, project : req.body.projectId, "uploads.weekNo" : req.body.weekNo, "uploads.year": req.body.year }]}, { $set :  { "uploads.$.files": array }}, (err, data) => {
-                    if(err) console.log(err);
-                  });
-                }
-                else {
-                        array.push ({
-
-                    files : req.files,
-                    weekNo : req.body.weekNo,
-                    month : req.body.month,
-                    year : req.body.year
-
-                })
-                timesheetModel.updateOne({ $and: [{ "userId.value": req.query.id, project : req.body.projectId }]}, { $set :  { uploads: array }}, (err, data) => {
-                    if(err) console.log(err);
-                  });
-                }
+                // if (result1.uploads.length > 0) {
+                //     array.push(...req.files)
+                //     if (result1.uploads.some(uploadData => uploadData.weekNo === req.body.weekNo && uploadData.month === req.body.month && uploadData.year === req.body.year)) {
+                //         timesheetModel.findOne({ $and: [{ "userId.value": req.query.id, project: req.body.projectId, "uploads.weekNo": req.body.weekNo, "uploads.year": req.body.year }] }, (err, data) => {
+                //             if (err) console.log(err);
+                //             for (let files of data.uploads) {
+                //                 if (files.weekNo === req.body.weekNo) {
+                //                     array.push(...files.files)
+                //                 }
+                //             }
+                //             timesheetModel.updateOne({ $and: [{ "userId.value": req.query.id, project: req.body.projectId, "uploads.weekNo": req.body.weekNo, "uploads.year": req.body.year }] }, { $set: { "uploads.$.files": array } }, (err, data1) => {
+                //                 if (err) console.log(err);
+                //                 console.log("data1", data1)
+                //             });
+                //         });
+                //     } else {
+                //         array.push({
+                //             files: req.files,
+                //             weekNo: req.body.weekNo,
+                //             month: req.body.month,
+                //             year: req.body.year
+                //         })
+                //         timesheetModel.updateOne({ $and: [{ "userId.value": req.query.id, project: req.body.projectId }] }, { $push: { uploads: array } }, (err, data2) => {
+                //             if (err) console.log(err);
+                //         });
+                //     }
+                // }
+                // else {
+                //     array.push({
+                //         files: req.files,
+                //         weekNo: req.body.weekNo,
+                //         month: req.body.month,
+                //         year: req.body.year
+                //     })
+                //     timesheetModel.updateOne({ $and: [{ "userId.value": req.query.id, project: req.body.projectId }] }, { $set: { uploads: array } }, (err, data3) => {
+                //         if (err) console.log(err);
+                //     });
+                // }
             }
         })
     }
