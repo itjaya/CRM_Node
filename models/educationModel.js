@@ -10,7 +10,9 @@ let educationSchema = new Schema({
     GPA : String,
     country : String,
     state : String,
-    city: String
+    city: String,
+    courses : String,
+    yearJoining : String
 });
 
 let educationModel = mongoose.model("educationModel", educationSchema);

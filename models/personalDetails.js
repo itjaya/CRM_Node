@@ -12,7 +12,7 @@ let personalDetailSchema = new Schema({
     dateOfBirth : String,
     visaType : String,
     country: String,
-    State : String,
+    state : String,
     maritalStatus : String,
     payrollId : String
 });

@@ -6,7 +6,7 @@ const vendorController = require("./controllers/vendor");
 const clientController = require("./controllers/client");
 const projController = require("./controllers/projectController");
 const timesheetController = require("./controllers/timesheetController");
-
+const addressController = require("./controllers/address")
 
 // User based routes
 router.post("/userRegister", userController.userRegister);
@@ -45,10 +45,14 @@ router.get("/getUserProjects", projController.getUserProjects);
 
 // Timesheets
 
-router.post("/addTimesheet", timesheetController.addTimesheet)
-router.get("/allEvents", timesheetController.getAllEvents)
-router.post("/upload", timesheetController.uploadDocuments)
-router.get("/downloadtimesheet", timesheetController.downloadtimesheet)
+router.post("/addTimesheet", timesheetController.addTimesheet);
+router.get("/allEvents", timesheetController.getAllEvents);
+router.post("/upload", timesheetController.uploadDocuments);
+router.get("/downloadtimesheet", timesheetController.downloadtimesheet);
 
+// Address
+
+router.post("/addAddress", addressController.addAddress)
+router.get("/getusersDetails", addressController.getusersDetails)
 
 module.exports = router;

@@ -6,12 +6,12 @@ var nodemailer = require("nodemailer");
 let userController = {}
 
 userController.userRegister = async (req, res) => {
-    if(req.body.id !== undefined) {
-        console.log(req.body)
+    if (req.body.id !== undefined) {
+        // console.log(req.body)
         let updateData = {
-            firstName : req.body.firstName,
-            lastName : req.body.lastName,
-            email : req.body.email
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email
         }
         userModel.findOne({ $and: [{ "_id": req.body.id }, { "email": req.body.email }] }, function (err, result) {
 
@@ -115,37 +115,37 @@ userController.userRegister = async (req, res) => {
             }
         })
     }
-    else{
-let result = await userModel.findOne({ email: req.body.data.email })
-    // console.log("result", result)
-    if (result == null) {
-        let userData = new userModel({
-            firstName: req.body.data.firstName,
-            lastName: req.body.data.lastName,
-            organization: req.body.organization,
-            email: req.body.data.email,
-            role: req.body.role,
-            createdAt: new Date,
-            account: true,
-            password: bcrypt.hashSync(req.body.data.password)
-        })
-
-        let result = await userData.save()
-        let output = {
-            msg: "User added successfully",
-            condition: true
-        }
-        res.send(output)
-    }
     else {
-        let output = {
-            msg: "Email already used.",
-            condition: false
+        let result = await userModel.findOne({ email: req.body.data.email })
+        // console.log("result", result)
+        if (result == null) {
+            let userData = new userModel({
+                firstName: req.body.data.firstName,
+                lastName: req.body.data.lastName,
+                organization: req.body.organization,
+                email: req.body.data.email,
+                role: req.body.role,
+                createdAt: new Date,
+                account: true,
+                password: bcrypt.hashSync(req.body.data.password)
+            })
+
+            let result = await userData.save()
+            let output = {
+                msg: "User added successfully",
+                condition: true
+            }
+            res.send(output)
         }
-        res.send(output)
+        else {
+            let output = {
+                msg: "Email already used.",
+                condition: false
+            }
+            res.send(output)
+        }
     }
-    }
-    
+
 }
 
 userController.userLogin = (req, res) => {
@@ -240,66 +240,66 @@ userController.userAcitivate = async (req, res) => {
 
 }
 
-userController.userPasswordUpdate = async (req, res) =>{
+userController.userPasswordUpdate = async (req, res) => {
     // console.log("haiii", req.body)
-    if(req.body.type === "reset") {
-       await userModel.updateOne({ email : req.body.email}, {$set : { password : bcrypt.hashSync(req.body.password)}},(err, update) =>{
-        if (err) console.log("err")
-        else{
-            let output = {
-                msg : "Password updated successfully.",
-                condition : true
+    if (req.body.type === "reset") {
+        await userModel.updateOne({ email: req.body.email }, { $set: { password: bcrypt.hashSync(req.body.password) } }, (err, update) => {
+            if (err) console.log("err")
+            else {
+                let output = {
+                    msg: "Password updated successfully.",
+                    condition: true
+                }
+                res.send(output)
             }
-            res.send(output)
-        }
-       });
+        });
     }
-    else{
-        console.log("haiiiii")
-        let result = await userModel.findOne({ _id : req.body.id});
+    else {
+        // console.log("haiiiii", req.body)
+        let result = await userModel.findOne({ _id: req.body.id });
         bcrypt.compare(req.body.oldPassword, result.password, function (err, hash) {
             if (err) console.log("err")
             else {
                 if (hash) {
-                    userModel.updateOne({ _id : req.body.id}, { $set : {password : bcrypt.hashSync(req.body.password)}}, (err, update)=>{
-                       if(err) console.log(err)
-                       else{
-                           let output = {
-                               msg : "Password Updated successfully.",
-                               condition : true
-                           }
-                           res.send(output)
-                       }
-                   })
+                    userModel.updateOne({ _id: req.body.id }, { $set: { password: bcrypt.hashSync(req.body.password) } }, (err, update) => {
+                        if (err) console.log(err)
+                        else {
+                            let output = {
+                                msg: "Password Updated successfully.",
+                                condition: true
+                            }
+                            res.send(output)
+                        }
+                    })
                 }
-                else{
+                else {
                     let output = {
-                        msg : "Old password didn't matched.",
-                        condition : false
+                        msg: "Old password didn't matched.",
+                        condition: false
                     }
                     res.send(output)
                 }
             }
         })
-    
+
     }
-    
+
 }
 
-userController.forgetPassword = async (req, res) =>{
+userController.forgetPassword = async (req, res) => {
     // console.log(req.body)
     let Email = req.body.email;
-    let result = await userModel.findOne({ email : req.body.email})
+    let result = await userModel.findOne({ email: req.body.email })
     // console.log("Ashok", result)
-    if(result == null) {
+    if (result == null) {
         var output = {
-            msg : "Invalid email please try it again.",
-            condition : false
+            msg: "Invalid email please try it again.",
+            condition: false
         }
         res.send(output)
     }
-    else{
-       
+    else {
+
         var transporter = nodemailer.createTransport({
             service: 'Gmail',
             // host: 'smtp.gmail.com',
@@ -313,10 +313,10 @@ userController.forgetPassword = async (req, res) =>{
         // var transporter = nodemailer.createTransport('smtps://user%40gmail.com:pass@smtp.gmail.com');
         var mailOptions = {
             from: '"It Ideology "<ts.itideology@gmail.com>', // sender address
-            to:Email, // list of receivers
+            to: Email, // list of receivers
             subject: 'itideology', // Subject line
             text: 'Hello world ?', // plaintext body
-            html : `<p>Hi ${result.firstName} </p>Please Click below link to reset password,<br/> <a href=http://localhost:3000/reset?${Email}>Reset Password</a><p>Regards,<br />It Ideology.</p>`
+            html: `<p>Hi ${result.firstName} </p>Please Click below link to reset password,<br/> <a href=http://localhost:3000/reset?${Email}>Reset Password</a><p>Regards,<br />It Ideology.</p>`
         };
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
@@ -325,8 +325,8 @@ userController.forgetPassword = async (req, res) =>{
             // console.log(info);
         });
         var output = {
-            msg : "Please check your mail to reset password.",
-            condition : true
+            msg: "Please check your mail to reset password.",
+            condition: true
         }
         res.send(output)
 

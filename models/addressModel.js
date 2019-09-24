@@ -7,10 +7,10 @@ let addressSchema = new Schema({
     country : String,
     state : String,
     city : String,
-    zipcode : String,
+    zipcode : Number,
     startDate : String,
     endDate : String,
-    active : String
+    active : Boolean
 });
 
 let addressModel = mongoose.model("addressModel", addressSchema);
