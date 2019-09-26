@@ -1,5 +1,7 @@
 const projModel = require('../models/projectModel');
 const timesheetModel = require('../models/timesheetsModel');
+const usrModel = require("../models/userModel")
+var nodemailer = require("nodemailer");
 
 const projController = {};
 
@@ -46,6 +48,8 @@ projController.addProject = async(req, res) => {
         let project = new projModel(projectData)
         try {
             let prjResult = await project.save();
+            let userEmail = await usrModel.findOne({ _id : clientData.user.value});
+            // console.log("Email", userEmail.email)
             let timeSheetData = {
                 userId : clientData.user,
                 organizationId : clientData.organization,
@@ -57,6 +61,30 @@ projController.addProject = async(req, res) => {
             }
             let timesheets = new timesheetModel(timeSheetData);
             await timesheets.save();
+            var transporter = nodemailer.createTransport({
+                service: 'Gmail',
+                // host: 'smtp.gmail.com',
+                port: 465,
+                secure: true,
+                auth: {
+                    user: "ts.itideology@gmail.com",
+                    pass: "Itideology123"
+                }
+            })
+            // var transporter = nodemailer.createTransport('smtps://user%40gmail.com:pass@smtp.gmail.com');
+            var mailOptions = {
+                from: '"It Ideology "<ts.itideology@gmail.com>', // sender address
+                to: userEmail.email, // list of receivers
+                subject: 'itideology', // Subject line
+                text: 'Hello world ?', // plaintext body
+                html: '<p>Hi ' + clientData.user.label + ', </p><p>Welcome to It Ideology</p>' // html body
+            };
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log("error", error);
+                }
+                // console.log(info);
+            });
             var output = {
                 msg: "Project added successfully.",
                 condition: true

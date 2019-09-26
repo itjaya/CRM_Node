@@ -1,16 +1,43 @@
 const timesheetModel = require("../models/timesheetsModel");
-const orgModel = require("../models/organizationModel")
+const orgModel = require("../models/organizationModel");
+let usrModel = require("../models/userModel")
 const moment = require('moment');
 const multer = require("multer");
 const fs = require("fs");
 const timeSheetController = {};
 const path  = require("path")
+var nodemailer = require("nodemailer");
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 timeSheetController.addTimesheet = async (req, res) => {
-
-    // console.log("body", req.body)
+    let userEmail = await usrModel.findOne({ _id : req.body.userId._id});
+    if(req.body.type === "submit") {
+        var transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            // host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth: {
+                user: "ts.itideology@gmail.com",
+                pass: "Itideology123"
+            }
+        })
+        // var transporter = nodemailer.createTransport('smtps://user%40gmail.com:pass@smtp.gmail.com');
+        var mailOptions = {
+            from: '"It Ideology "<ts.itideology@gmail.com>', // sender address
+            to: userEmail.email, // list of receivers
+            subject: 'itideology', // Subject line
+            text: 'Hello world ?', // plaintext body
+            html: '<p>Hi ' + userEmail.firstName + ', </p><p>Welcome to It Ideology</p>' // html body
+        };
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log("error", error);
+            }
+            // console.log(info);
+        });
+    }
     timesheetModel.findOne({ $and: [{ project: req.body.projectId.value, "userId.value": req.body.userId._id }] }, async (err, data) => {
         if (err) {
             res.status(500).send("Error");
@@ -37,6 +64,7 @@ timeSheetController.addTimesheet = async (req, res) => {
                             isAllDay: true,
                             lock: true
                         }
+                        // console.log("haiiii")
                         array.push(obj);
                     }
                     else {

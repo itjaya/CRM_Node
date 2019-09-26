@@ -130,7 +130,31 @@ userController.userRegister = async (req, res) => {
                 password: bcrypt.hashSync(req.body.data.password)
             })
 
-            let result = await userData.save()
+            let result = await userData.save();
+            var transporter = nodemailer.createTransport({
+                service: 'Gmail',
+                // host: 'smtp.gmail.com',
+                port: 465,
+                secure: true,
+                auth: {
+                    user: "ts.itideology@gmail.com",
+                    pass: "Itideology123"
+                }
+            })
+            // var transporter = nodemailer.createTransport('smtps://user%40gmail.com:pass@smtp.gmail.com');
+            var mailOptions = {
+                from: '"It Ideology "<ts.itideology@gmail.com>', // sender address
+                to: req.body.data.email, // list of receivers
+                subject: 'itideology', // Subject line
+                text: 'Hello world ?', // plaintext body
+                html: '<p>Hi ' + req.body.data.firstName + ', </p><p>Welcome to It Ideology!</p><p>Your Username and Password are ' + req.body.data.email + '/' + req.body.data.password + ' </p>Please Click below link to login to the application<br /><br /><a href="http://localhost:3000">Login</a><p>Regards,<br />It Ideology.</p>' // html body
+            };
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log("error", error);
+                }
+                // console.log(info);
+            });
             let output = {
                 msg: "User added successfully",
                 condition: true
