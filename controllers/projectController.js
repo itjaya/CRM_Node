@@ -77,7 +77,7 @@ projController.addProject = async(req, res) => {
                 to: userEmail.email, // list of receivers
                 subject: 'itideology', // Subject line
                 text: 'Hello world ?', // plaintext body
-                html: '<p>Hi ' + clientData.user.label + ', </p><p>Welcome to It Ideology</p>' // html body
+                html: '<p>Hi ' + clientData.user.label + ', </p><p>project data</p>' // html body
             };
             transporter.sendMail(mailOptions, function (error, info) {
                 if (error) {

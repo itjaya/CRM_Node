@@ -29,7 +29,7 @@ timeSheetController.addTimesheet = async (req, res) => {
             to: userEmail.email, // list of receivers
             subject: 'itideology', // Subject line
             text: 'Hello world ?', // plaintext body
-            html: '<p>Hi ' + userEmail.firstName + ', </p><p>Welcome to It Ideology</p>' // html body
+            html: '<p>Hi ' + userEmail.firstName + ', </p><p>Timesheet data</p>' // html body
         };
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
