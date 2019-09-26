@@ -11,16 +11,21 @@ let timesheetSchema = new Schema({
     year: String,
     uploads :[],
     events: [{
-        title : Number,
-        start: String,
-        end : String,
-        weekNo: String,
-        month : String,
+        weekNo : String,
         year : String,
-        isAllDay: Boolean,
-        lock: { type: Boolean, default: false }
+        month : String,
+        description : String,
+        dates : [{
+            title : Number,
+            start: String,
+            end : String,
+            weekNo: String,
+            month : String,
+            year : String,
+            isAllDay: Boolean,
+            lock: { type: Boolean, default: false }
+        }]
     }]
-
 });
 
 let timesheetModel = mongoose.model("timesheetModel", timesheetSchema);

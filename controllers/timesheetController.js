@@ -22,9 +22,7 @@ timeSheetController.addTimesheet = async (req, res) => {
             let yearNo = moment().year();
             let weekNo = req.body.weekNo;
             let array = [];
-            let submitArray = [];
-            let oldEventsArray = [];
-
+          
             for (var i = 0; i < weekData.length; i++) {
                 if (weekData[i].title.length > 0) {
 
@@ -39,7 +37,7 @@ timeSheetController.addTimesheet = async (req, res) => {
                             isAllDay: true,
                             lock: true
                         }
-                        submitArray.push(obj);
+                        array.push(obj);
                     }
                     else {
                         let obj = {
@@ -54,65 +52,46 @@ timeSheetController.addTimesheet = async (req, res) => {
                         }
                         array.push(obj);
                     }
-                    
                 }
             }
-            if (data.events.length > 0) {
-                for (var j = 0; j < data.events.length; j++) {
-                    oldEventsArray.push(data.events[j].start);
-                }
-                if(req.body.type === "submit") {
-                    for (var k = 0; k < submitArray.length; k++) {
-                        let newWeekDate = submitArray[k].start;
-                        if (submitArray[k].title.length > 0) {
-                            if (oldEventsArray.includes(newWeekDate)) {
 
-                                try {
-                                    await timesheetModel.updateMany({ $and: [{ project: req.body.projectId.value, "userId.value": req.body.userId._id, "events.start": submitArray[k].start }] }, { $set: { "events.$": submitArray[k] } });
-                                }
-                                catch (error) { }
-                            }
-                            else {
-                                try {
-                                    await timesheetModel.updateMany({ $and: [{ project: req.body.projectId.value, "userId.value": req.body.userId._id }] }, { $push: { events: submitArray[k] } });
-                                }
-                                catch (error) { }
-                            }
-                        }
+            let obj = {
+                weekNo : weekNo,
+                year : yearNo,
+                month : monthNo,
+                description : req.body.description,
+                dates : array
+            }
+            if (data.events.length > 0) {
+                if(data.events.some(event => event.weekNo === weekNo && parseInt(event.year) === yearNo)) {
+                    try {
+                        await timesheetModel.updateMany({ $and: [{ project: req.body.projectId.value, "userId.value": req.body.userId._id, events : { $elemMatch : { weekNo : weekNo, year : yearNo }} }] }, { $set: { "events.$": obj } }, (err, data4) => {
+                            if(err) throw err;
+                            res.send({
+                                msg: "Timesheet data updated successfully.",
+                                condition: true
+                            })
+    
+                        });
                     }
-                    res.send({
-                        msg: "Timesheet data submitted successfully.",
-                        condition: true
-                    })
+                    catch (error) { }
                 }
                 else {
-                    for (var k = 0; k < array.length; k++) {
-                        let newWeekDate = array[k].start
-                        if (array[k].title.length > 0) {
-
-                            if (oldEventsArray.includes(newWeekDate)) {
-                                try {
-                                    await timesheetModel.updateMany({ $and: [{ project: req.body.projectId.value, "userId.value": req.body.userId._id, "events.start": array[k].start }] }, { $set: { "events.$": array[k] } });
-                                }
-                                catch (error) { }
-                            }
-                            else {
-                                try {
-                                    await timesheetModel.updateMany({ $and: [{ project: req.body.projectId.value, "userId.value": req.body.userId._id }] }, { $push: { events: array[k] } });
-                                }
-                                catch (error) { }
-                            }
-                        }
+                    try {
+                        timesheetModel.updateOne({ $and: [{ project: req.body.projectId.value, "userId.value": req.body.userId._id }] }, { $push: { events: obj } }, (err, data5) => {
+                            if(err) throw err;
+                            res.send({
+                                msg: "Timesheet data updated successfully.",
+                                condition: true
+                            })
+                        });
                     }
-                    res.send({
-                        msg: "Timesheet data updated successfully.",
-                        condition: true
-                    })
+                    catch (error) { }
                 }
             }
             else {
                 try {
-                    await timesheetModel.updateOne({ "userId.value": req.body.userId._id }, { $push: { events: array } });
+                    await timesheetModel.updateOne({ $and: [{ project: req.body.projectId.value, "userId.value": req.body.userId._id }]}, { $push: { events: obj } });
                     res.send({
                         msg: "Timesheet data added successfully.",
                         condition: true
@@ -137,7 +116,7 @@ timeSheetController.getAllEvents = async (req, res) => {
         res.status(200).send(events)
     }
     catch (error) {
-        res.status(500).send(error)
+        res.send([])
     }
 }
 
@@ -383,46 +362,47 @@ timeSheetController.uploadDocuments = async (req, res) => {
             }
             else {
                 let array = [];
-                console.log("body", req.body.weekNo)                
                 let result1 = await timesheetModel.findOne({  $and: [{ "userId.value": req.query.id, project : req.body.projectId }] });
-                // if (result1.uploads.length > 0) {
-                //     array.push(...req.files)
-                //     if (result1.uploads.some(uploadData => uploadData.weekNo === req.body.weekNo && uploadData.month === req.body.month && uploadData.year === req.body.year)) {
-                //         timesheetModel.findOne({ $and: [{ "userId.value": req.query.id, project: req.body.projectId, "uploads.weekNo": req.body.weekNo, "uploads.year": req.body.year }] }, (err, data) => {
-                //             if (err) console.log(err);
-                //             for (let files of data.uploads) {
-                //                 if (files.weekNo === req.body.weekNo) {
-                //                     array.push(...files.files)
-                //                 }
-                //             }
-                //             timesheetModel.updateOne({ $and: [{ "userId.value": req.query.id, project: req.body.projectId, "uploads.weekNo": req.body.weekNo, "uploads.year": req.body.year }] }, { $set: { "uploads.$.files": array } }, (err, data1) => {
-                //                 if (err) console.log(err);
-                //                 console.log("data1", data1)
-                //             });
-                //         });
-                //     } else {
-                //         array.push({
-                //             files: req.files,
-                //             weekNo: req.body.weekNo,
-                //             month: req.body.month,
-                //             year: req.body.year
-                //         })
-                //         timesheetModel.updateOne({ $and: [{ "userId.value": req.query.id, project: req.body.projectId }] }, { $push: { uploads: array } }, (err, data2) => {
-                //             if (err) console.log(err);
-                //         });
-                //     }
-                // }
-                // else {
-                //     array.push({
-                //         files: req.files,
-                //         weekNo: req.body.weekNo,
-                //         month: req.body.month,
-                //         year: req.body.year
-                //     })
-                //     timesheetModel.updateOne({ $and: [{ "userId.value": req.query.id, project: req.body.projectId }] }, { $set: { uploads: array } }, (err, data3) => {
-                //         if (err) console.log(err);
-                //     });
-                // }
+                if (result1.uploads.length > 0) {
+                    if (result1.uploads.some(uploadData => uploadData.weekNo === req.body.weekNo && uploadData.month === req.body.month && uploadData.year === req.body.year)) {
+                        timesheetModel.findOne({ $and: [{ "userId.value": req.query.id, project: req.body.projectId, "uploads.weekNo": req.body.weekNo, "uploads.year": req.body.year }] }, (err, data) => {
+                            if (err) console.log(err);
+                            array.push(...req.files)
+                            for (let files of data.uploads) {
+                                if (files.weekNo === req.body.weekNo) {
+                                    array.push(...files.files)
+                                }
+                            }
+                            timesheetModel.updateOne({ $and: [{ "userId.value": req.query.id, project: req.body.projectId, uploads : { $elemMatch : { weekNo : req.body.weekNo, year : req.body.year }} }] }, { $set: { "uploads.$.files": array } }, (err, data1) => {
+                                if (err) console.log(err);
+                                console.log("data1", data1)
+                            });
+                        });
+                    } else {
+                        array.push({
+                            files: req.files,
+                            weekNo: req.body.weekNo,
+                            month: req.body.month,
+                            year: req.body.year
+                        })
+                        timesheetModel.updateOne({ $and: [{ "userId.value": req.query.id, project: req.body.projectId }] }, { $push: { uploads: array } }, (err, data2) => {
+                            if (err) console.log(err);
+                            console.log("data2", data2)
+                        });
+                    }
+                }
+                else {
+                    array.push({
+                        files: req.files,
+                        weekNo: req.body.weekNo,
+                        month: req.body.month,
+                        year: req.body.year
+                    })
+                    timesheetModel.updateOne({ $and: [{ "userId.value": req.query.id, project: req.body.projectId }] }, { $set: { uploads: array } }, (err, data3) => {
+                        if (err) console.log(err);
+                        console.log("data3", data3)
+                    });
+                }
             }
         })
     }
