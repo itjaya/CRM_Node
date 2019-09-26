@@ -147,7 +147,7 @@ userController.userRegister = async (req, res) => {
                 to: req.body.data.email, // list of receivers
                 subject: 'itideology', // Subject line
                 text: 'Hello world ?', // plaintext body
-                html: '<p>Hi ' + req.body.data.firstName + ', </p><p>Welcome to It Ideology!</p><p>Your Username and Password are ' + req.body.data.email + '/' + req.body.data.password + ' </p>Please Click below link to login to the application<br /><br /><a href="http://localhost:3000">Login</a><p>Regards,<br />It Ideology.</p>' // html body
+                html: '<p>Hi ' + req.body.data.firstName + ', </p><p>Welcome to My Reporting!</p><p>Your Username and Password are ' + req.body.data.email + '/' + req.body.data.password + ' </p>Please click below link to login to the application<br /><br /><a href="http://localhost:3000">Login</a><p>Regards,<br />My Reporting.</p>' // html body
             };
             transporter.sendMail(mailOptions, function (error, info) {
                 if (error) {
