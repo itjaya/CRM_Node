@@ -76,7 +76,6 @@ vendorController.addVendor = (req, res) => {
 }
 
 vendorController.getVendors = async (req, res) => {
-   
     if (req.query.id !== "undefined") {
         let vendors = await vendorModel.find({ organizationId: req.query.id })
         res.send(vendors)

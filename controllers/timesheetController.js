@@ -142,7 +142,7 @@ timeSheetController.getAllEvents = async (req, res) => {
     try {
         let events = await timesheetModel.findOne({ $and: [{ "userId.value": req.query.userId }, { project: req.query.project.value }] });
         // console.log("events", events)
-        res.status(200).send(events)
+        res.send(events)
     }
     catch (error) {
         res.send([])

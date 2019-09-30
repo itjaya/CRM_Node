@@ -1,58 +1,60 @@
 const express = require('express');
 const router = express.Router();
+const verifyToken = require('./config/verifyToken');
+
 const userController = require("./controllers/userController");
 const orgController = require("./controllers/organizationController");
 const vendorController = require("./controllers/vendor");
 const clientController = require("./controllers/client");
 const projController = require("./controllers/projectController");
 const timesheetController = require("./controllers/timesheetController");
-const addressController = require("./controllers/address")
+const addressController = require("./controllers/address");
 
 // User based routes
 router.post("/userRegister", userController.userRegister);
 router.post("/userLogin", userController.userLogin);
-router.get("/getUsers", userController.getUsers);
-router.get("/userAcitivate", userController.userAcitivate);
+router.get("/getUsers", verifyToken, userController.getUsers);
+router.get("/userAcitivate", verifyToken, userController.userAcitivate);
 router.post("/passwordUpdate", userController.userPasswordUpdate);
 router.post("/forgetPassword", userController.forgetPassword);
 
 // Organization based routes
-router.post("/addOrganization", orgController.addOrganization)
-router.get("/getOrganizations", orgController.getOrganizations)
-router.get("/getOrganizationByName", orgController.getOrganizationByName);
-router.post("/deleteOrganization", orgController.deleteOrganization)
+router.post("/addOrganization",verifyToken, orgController.addOrganization)
+router.get("/getOrganizations",verifyToken, orgController.getOrganizations)
+router.get("/getOrganizationByName",verifyToken, orgController.getOrganizationByName);
+router.post("/deleteOrganization",verifyToken, orgController.deleteOrganization)
 
 // Vendor based routes
 
-router.post("/addVendor", vendorController.addVendor);
-router.get("/getVendors", vendorController.getVendors);
-router.get("/deleteVendors", vendorController.deleteVendors);
+router.post("/addVendor",verifyToken, vendorController.addVendor);
+router.get("/getVendors", verifyToken,vendorController.getVendors);
+router.get("/deleteVendors",verifyToken, vendorController.deleteVendors);
 
 
 // Client based routes
 
-router.post("/addClient", clientController.addClient);
-router.get("/getClients", clientController.getClients);
-router.get("/deleteClients", clientController.deleteClients);
+router.post("/addClient",verifyToken, clientController.addClient);
+router.get("/getClients", verifyToken,clientController.getClients);
+router.get("/deleteClients", verifyToken,clientController.deleteClients);
 
 
 // Project based routes
 
-router.post("/addProject", projController.addProject);
-router.get("/getProjects", projController.getProjcts);
-router.post("/deleteProject", projController.deleteProject);
-router.get("/getUserProjects", projController.getUserProjects);
+router.post("/addProject",verifyToken, projController.addProject);
+router.get("/getProjects",verifyToken, projController.getProjcts);
+router.post("/deleteProject",verifyToken, projController.deleteProject);
+router.get("/getUserProjects",verifyToken, projController.getUserProjects);
 
 // Timesheets
 
-router.post("/addTimesheet", timesheetController.addTimesheet);
-router.get("/allEvents", timesheetController.getAllEvents);
-router.post("/upload", timesheetController.uploadDocuments);
-router.get("/downloadtimesheet", timesheetController.downloadtimesheet);
+router.post("/addTimesheet",verifyToken, timesheetController.addTimesheet);
+router.get("/allEvents",verifyToken, timesheetController.getAllEvents);
+router.post("/upload", verifyToken,timesheetController.uploadDocuments);
+router.get("/downloadtimesheet", verifyToken,timesheetController.downloadtimesheet);
 
 // Address
 
-router.post("/addAddress", addressController.addAddress)
-router.get("/getusersDetails", addressController.getusersDetails)
+router.post("/addAddress",verifyToken, addressController.addAddress)
+router.get("/getusersDetails",verifyToken, addressController.getusersDetails)
 
 module.exports = router;

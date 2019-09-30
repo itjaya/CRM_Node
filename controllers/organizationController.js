@@ -1,4 +1,5 @@
 const orgModel = require('../models/organizationModel');
+const verifyToken = require('../config/verifyToken');
 let orgController = {}
 
 
@@ -109,7 +110,7 @@ orgController.addOrganization = async (req, res) => {
     }
     else {
         let org = await orgModel.findOne({ organizationName: req.body.organizationName })
-        if (org !== null) {
+        if (org === null) {
 
             try {
                 let orgData = new orgModel(req.body);
@@ -147,7 +148,7 @@ orgController.getOrganizations = async(req, res) => {
     res.send(allData)
 }
 
-orgController.getOrganizationByName = async(req, res) => {``
+orgController.getOrganizationByName = async(req, res) => {
     let orgData = await orgModel.findOne({ organizationName:req.query.name })
     res.send(orgData);
 }

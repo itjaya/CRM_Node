@@ -2,6 +2,10 @@ const userModel = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 var nodemailer = require("nodemailer");
+const jwt = require('jsonwebtoken');
+const config = require('../config/config');
+const SimpleCrypto = require("simple-crypto-js").default;
+
 
 let userController = {}
 
@@ -180,6 +184,8 @@ userController.userLogin = (req, res) => {
         }
         else {
             if (data !== null) {
+                var simpleCrypto = new SimpleCrypto(config.encryptionKey);
+
                 bcrypt.compare(req.body.password, data.password, function (err, hash) {
                     if (err) {
                         console.log("err")
@@ -187,10 +193,13 @@ userController.userLogin = (req, res) => {
                     else {
                         if (hash) {
                             if (data.account) {
+                                let token = jwt.sign({ id: data._id}, config.secret, {expiresIn : 1000} );
+                                let chiperText = simpleCrypto.encrypt(token);
                                 var output = {
                                     msg: "User login successfully",
                                     condition: true,
-                                    userData: data
+                                    userData: data,
+                                    token: chiperText
                                 }
                                 res.send(output)
                             }
@@ -211,7 +220,6 @@ userController.userLogin = (req, res) => {
                             res.send(output)
                         }
                     }
-                    // res == false
                 });
             }
             else {
