@@ -11,6 +11,7 @@ var nodemailer = require("nodemailer");
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 timeSheetController.addTimesheet = async (req, res) => {
+    
     let userEmail = await usrModel.findOne({ _id : req.body.userId._id});
     if(req.body.type === "submit") {
         var transporter = nodemailer.createTransport({
@@ -141,7 +142,7 @@ timeSheetController.getAllEvents = async (req, res) => {
     try {
         let events = await timesheetModel.findOne({ $and: [{ "userId.value": req.query.userId }, { project: req.query.project.value }] });
         // console.log("events", events)
-        res.status(200).send(events)
+        res.send(events)
     }
     catch (error) {
         res.send([])
